@@ -449,10 +449,10 @@ class Simple_Post_Gmaps_Admin extends WP_Ajax {
 		
 		wp_enqueue_style ( 'simple-gm', SGM_URL . 'inc/ressources/simple.gm.css', array(), SGM_VERSION, 'all' );
 
-		wp_enqueue_script( 'geo-location', 	SGM_URL . 'inc/ressources/geo-location.min.js', array('jquery'), 		SGM_VERSION );
-		wp_enqueue_script( 'geo-gears', 	SGM_URL . 'inc/ressources/gears-init.min.js', 	array('geo-location'), 	SGM_VERSION );
-		wp_enqueue_script( 'google-jsapi', 	'http://www.google.com/jsapi', 					array('geo-gears'), 	SGM_VERSION );
-		wp_enqueue_script( 'simple-gm', 	SGM_URL . 'inc/ressources/simple.gm.min.js', 	array('google-jsapi'), 	SGM_VERSION );
+		wp_enqueue_script( 'geo-location', SGM_URL . 'inc/ressources/geo-location.min.js', array( 'jquery' ), SGM_VERSION );
+		wp_enqueue_script( 'geo-gears', SGM_URL . 'inc/ressources/gears-init.min.js', 	array( 'geo-location' ), SGM_VERSION );
+		wp_enqueue_script( 'google-jsapi', 'google.com/jsapi', array('geo-gears'), SGM_VERSION );
+		wp_enqueue_script( 'simple-gm', SGM_URL . 'inc/ressources/simple.gm.min.js', array( 'google-jsapi' ), SGM_VERSION );
 		
 		// Translate and region ?
 		$current_settings = get_option( SGM_OPTION );

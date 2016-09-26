@@ -13,7 +13,7 @@ class Simple_Post_Gmaps_Widget extends WP_Widget {
 	 * @author Amaury Balmer
 	 */
 	function Simple_Post_Gmaps_Widget() {
-		$this->WP_Widget('simple-post-gmaps', __('Related Maps for Post', 'simple-post-gmaps'), array( 'classname' => 'widget_spgm', 'description' => __( "Display the google maps of relative post on singular view.", 'simple-post-gmaps' ) ));
+		WP_Widget::__construct('simple-post-gmaps', __('Related Maps for Post', 'simple-post-gmaps'), array( 'classname' => 'widget_spgm', 'description' => __( "Display the google maps of relative post on singular view.", 'simple-post-gmaps' ) ));
 	}
 	
 	/**

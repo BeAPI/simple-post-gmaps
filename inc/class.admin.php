@@ -262,12 +262,20 @@ class Simple_Post_Gmaps_Admin extends WP_Ajax {
 	 */
 	function pageManage() {
 		global $locale;
-		
-		// Display message
-		$this->displayMessage();
-		
+
 		// Get settings on DB
 		$current_settings = get_option( SGM_OPTION );
+
+		// Default value for api_key
+		if ( !isset( $current_settings['api_key'] ) ) {
+			$current_settings['api_key'] = '';
+			// As empty value, set error message
+			$this->message = __( 'In order to use this plugin you must enter your "Google API key". Find out how to get it <a href="https://developers.google.com/maps/documentation/javascript/get-api-key">here</a>.', 'simple-post-gmaps' );
+			$this->status  = 'error';
+		}
+
+		// Display message
+		$this->displayMessage();
 
 		// Default values for custom types
 		if ( !isset( $current_settings['custom-types'] ) )
@@ -294,90 +302,101 @@ class Simple_Post_Gmaps_Admin extends WP_Ajax {
 			<h2><?php _e( "Simple Post Gmaps : Settings", 'simple-post-gmaps' ); ?></h2>
 		
 			<form action="" method="post">
-				<h3><?php _e('Custom Post Types', 'simple-post-gmaps'); ?></h3>
 				<div id="col-container">
-					<table class="widefat fixed" cellspacing="0">
-						<thead>
-							<tr>
-								<th scope="col" id="label" class="manage-column column-name"><?php _e('Custom type', 'simple-post-gmaps'); ?></th>
-								<th scope="col" id="label" class="manage-column column-name"><?php _e('Active Maps ?', 'simple-post-gmaps'); ?></th>
-							</tr>
-						</thead>
-						<tfoot>
-							<tr>
-								<th scope="col" id="label" class="manage-column column-name"><?php _e('Custom type', 'simple-post-gmaps'); ?></th>
-								<th scope="col" id="label" class="manage-column column-name"><?php _e('Active Maps ?', 'simple-post-gmaps'); ?></th>
-							</tr>
-						</tfoot>
-						
-						<tbody id="the-list" class="list:taxonomies">
-							<?php
-							$class = 'alternate';
-							$i = 0;
-							foreach ( get_post_types( array(), 'objects' ) as $post_type ) :
-								if ( !$post_type->show_ui || empty( $post_type->labels->name ) )
-									continue;
-								
-								$i++;
-								$class = ( $class == 'alternate' ) ? '' : 'alternate';
-								?>
-								<tr id="custom type-<?php echo $i; ?>" class="<?php echo $class; ?>">
-									<th class="name column-name"><?php echo esc_html( $post_type->labels->name ); ?></th>
-									<td>
-										<?php
-										
-										echo '<input type="checkbox" name="custom-types[]" value="'.esc_attr( $post_type->name ).'" '.checked( true, in_array( $post_type->name, (array) $current_settings['custom-types'] ), false ).' />' . "\n";
-										?>
-									</td>
+					<h3><?php _e( 'Google API key', 'simple-post-gmaps' ); ?></h3>
+					<table class="form-table">
+						<tr valign="top">
+							<th scope="row"><label for="api_key"><?php _e( 'Google API key', 'simple-post-gmaps' ); ?></label></th>
+							<td>
+								<input name="api_key" type="text" id="api_key" value="<?php echo esc_attr( $current_settings['api_key'] ); ?>" class="regular-text" />
+							</td>
+						</tr>
+					</table>
+					<?php if ( ! empty( $current_settings['api_key'] ) ) : ?>
+						<h3><?php _e('Custom Post Types', 'simple-post-gmaps'); ?></h3>
+						<table class="widefat fixed" cellspacing="0">
+							<thead>
+								<tr>
+									<th scope="col" id="label" class="manage-column column-name"><?php _e('Custom type', 'simple-post-gmaps'); ?></th>
+									<th scope="col" id="label" class="manage-column column-name"><?php _e('Active Maps ?', 'simple-post-gmaps'); ?></th>
 								</tr>
-							<?php endforeach; ?>
-						</tbody>
-					</table>
-					
-					<h3><?php _e( 'Google Maps', 'simple-post-gmaps' ); ?></h3>
-					<table class="form-table">
-						<tr valign="top">
-							<th scope="row"><label for="region"><?php _e( 'Google Maps Region', 'simple-post-gmaps' ); ?></label></th>
-							<td>
-								<input name="region" type="text" id="region" value="<?php echo esc_attr( $current_settings['region'] ); ?>" class="regular-text" />
-								<br />
-								<span class="description"><?php _e( 'You can define the default region of Google Maps for improve search results. The <code>region</code> parameter accepts <a href="http://www.unicode.org/reports/tr35/#Unicode_Language_and_Locale_Identifiers">Unicode region subtag identifiers</a> which (generally) have a one-to-one mapping to country code Top-Level Domains (ccTLDs). Most Unicode region identifiers are identical to ISO 3166-1 codes, with some notable exceptions. For example, Great Britain\'s ccTLD is "uk" (corresponding to the domain <code>.co.uk</code>) while its region identifier is "GB."', 'simple-post-gmaps' ); ?></span>
-							</td>
-						</tr>
-						<tr valign="top">
-							<th scope="row"><label for="language"><?php _e( 'Google Maps Language', 'simple-post-gmaps' ); ?></label></th>
-							<td>
-								<input name="language" type="text" id="language" value="<?php echo esc_attr( $current_settings['language'] ); ?>" class="regular-text" />
-								<br />
-								<span class="description"><?php _e( 'You can define the language of Google Maps interface. Use <a href="http://spreadsheets.google.com/pub?key=p9pdwsai2hDMsLkXsoM05KQ&gid=1">this Google page of documentation</a> for find your code language. Example : French, put "fr"', 'simple-post-gmaps' ); ?></span>
-							</td>
-						</tr>
-					</table>
-					
-					<h3><?php _e( 'Info window content (advanced usage !)', 'simple-post-gmaps' ); ?></h3>
-					<table class="form-table">
-						<tr valign="top">
-							<th scope="row"><label for="tooltip"><?php _e( 'Code HTML for tooltip Google Maps', 'simple-post-gmaps' ); ?></label></th>
-							<td>
-								<textarea cols="50" rows="10" style="width:100%" name="tooltip" type="text" id="tooltip"><?php echo esc_attr( $current_settings['tooltip'] ); ?></textarea>
-							</td>
-						</tr>
-					</table>
-					<h3><?php _e( 'End of content', 'simple-post-gmaps' ); ?></h3>
-					<table class="form-table">
-						<tr valign="top">
-							<th scope="row"><label for="hidden_coordinates"><?php _e( 'Do not add the hidden coordinates at the end of the article', 'simple-post-gmaps' ); ?></label></th>
-							<td>
-								<input name="hidden_coordinates" type="checkbox" <?php checked( true, $current_settings['hidden_coordinates'], true ) ?> id="hidden_coordinates" value="1" class="regular-text" />
-							</td>
-						</tr>
-					</table>
+							</thead>
+							<tfoot>
+								<tr>
+									<th scope="col" id="label" class="manage-column column-name"><?php _e('Custom type', 'simple-post-gmaps'); ?></th>
+									<th scope="col" id="label" class="manage-column column-name"><?php _e('Active Maps ?', 'simple-post-gmaps'); ?></th>
+								</tr>
+							</tfoot>
+
+							<tbody id="the-list" class="list:taxonomies">
+								<?php
+								$class = 'alternate';
+								$i = 0;
+								foreach ( get_post_types( array(), 'objects' ) as $post_type ) :
+									if ( !$post_type->show_ui || empty( $post_type->labels->name ) )
+										continue;
+
+									$i++;
+									$class = ( $class == 'alternate' ) ? '' : 'alternate';
+									?>
+									<tr id="custom type-<?php echo $i; ?>" class="<?php echo $class; ?>">
+										<th class="name column-name"><?php echo esc_html( $post_type->labels->name ); ?></th>
+										<td>
+											<?php
+
+											echo '<input type="checkbox" name="custom-types[]" value="'.esc_attr( $post_type->name ).'" '.checked( true, in_array( $post_type->name, (array) $current_settings['custom-types'] ), false ).' />' . "\n";
+											?>
+										</td>
+									</tr>
+								<?php endforeach; ?>
+							</tbody>
+						</table>
+
+						<h3><?php _e( 'Google Maps', 'simple-post-gmaps' ); ?></h3>
+						<table class="form-table">
+							<tr valign="top">
+								<th scope="row"><label for="region"><?php _e( 'Google Maps Region', 'simple-post-gmaps' ); ?></label></th>
+								<td>
+									<input name="region" type="text" id="region" value="<?php echo esc_attr( $current_settings['region'] ); ?>" class="regular-text" />
+									<br />
+									<span class="description"><?php _e( 'You can define the default region of Google Maps for improve search results. The <code>region</code> parameter accepts <a href="http://www.unicode.org/reports/tr35/#Unicode_Language_and_Locale_Identifiers">Unicode region subtag identifiers</a> which (generally) have a one-to-one mapping to country code Top-Level Domains (ccTLDs). Most Unicode region identifiers are identical to ISO 3166-1 codes, with some notable exceptions. For example, Great Britain\'s ccTLD is "uk" (corresponding to the domain <code>.co.uk</code>) while its region identifier is "GB."', 'simple-post-gmaps' ); ?></span>
+								</td>
+							</tr>
+							<tr valign="top">
+								<th scope="row"><label for="language"><?php _e( 'Google Maps Language', 'simple-post-gmaps' ); ?></label></th>
+								<td>
+									<input name="language" type="text" id="language" value="<?php echo esc_attr( $current_settings['language'] ); ?>" class="regular-text" />
+									<br />
+									<span class="description"><?php _e( 'You can define the language of Google Maps interface. Use <a href="http://spreadsheets.google.com/pub?key=p9pdwsai2hDMsLkXsoM05KQ&gid=1">this Google page of documentation</a> for find your code language. Example : French, put "fr"', 'simple-post-gmaps' ); ?></span>
+								</td>
+							</tr>
+						</table>
+
+						<h3><?php _e( 'Info window content (advanced usage !)', 'simple-post-gmaps' ); ?></h3>
+						<table class="form-table">
+							<tr valign="top">
+								<th scope="row"><label for="tooltip"><?php _e( 'Code HTML for tooltip Google Maps', 'simple-post-gmaps' ); ?></label></th>
+								<td>
+									<textarea cols="50" rows="10" style="width:100%" name="tooltip" type="text" id="tooltip"><?php echo esc_attr( $current_settings['tooltip'] ); ?></textarea>
+								</td>
+							</tr>
+						</table>
+						<h3><?php _e( 'End of content', 'simple-post-gmaps' ); ?></h3>
+						<table class="form-table">
+							<tr valign="top">
+								<th scope="row"><label for="hidden_coordinates"><?php _e( 'Do not add the hidden coordinates at the end of the article', 'simple-post-gmaps' ); ?></label></th>
+								<td>
+									<input name="hidden_coordinates" type="checkbox" <?php checked( true, $current_settings['hidden_coordinates'], true ) ?> id="hidden_coordinates" value="1" class="regular-text" />
+								</td>
+							</tr>
+						</table>
+					<?php endif; ?>
 					<p class="submit">
 						<?php wp_nonce_field( 'save-sgm-settings' ); ?>
 						<input class="button-primary" name="save-sgm" type="submit" value="<?php _e( 'Save settings', 'simple-post-gmaps' ); ?>" />
 					</p>
-				</form>
-			</div><!-- /col-container -->
+				</div><!-- /col-container -->
+			</form>
 		</div>
 		<?php
 		return true;
@@ -527,4 +546,3 @@ class Simple_Post_Gmaps_Admin extends WP_Ajax {
 		<?php
 	}
 }
-?>

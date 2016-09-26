@@ -438,9 +438,6 @@ class Simple_Post_Gmaps_Admin extends WP_Ajax {
 		if ( !in_array( $pagenow, array('post.php', 'post-new.php') ) )
 			return false;
 		
-		// Get settings on DB
-		$current_settings = get_option( SGM_OPTION );
-		
 		if ( isset($_GET['post']) ) { // Edition
 			$post_type = get_post_type( $_GET['post'] );
 		} else { // Add ?

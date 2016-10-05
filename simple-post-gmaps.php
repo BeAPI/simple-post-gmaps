@@ -1,33 +1,33 @@
 <?php
 /*
-Plugin Name: Simple Post GMaps
-Plugin URI: http://www.beapi.fr
-Description: Allow to geolocalise post with Google Maps (API in v3). No google maps key are required. You can choose with the map the position of the post on admin. You can use shortcode for display the map, or the widget. You can also display a maps with each posts localized on the same maps !
-Author: BeAPI
-Author URI: http://www.beapi.fr
-Version: 3.2
-Text Domain: simple-post-gmaps
-Domain Path: /languages/
-Network: false
-
-----
-
-Copyright 2011 Amaury Balmer (amaury@beapi.fr) - Be-API
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ Plugin Name: Simple Post GMaps
+ Version: 3.2
+ Plugin URI: http://www.beapi.fr
+ Description: Allow to geolocalise post with Google Maps (API in v3). No google maps key are required. You can choose with the map the position of the post on admin. You can use shortcode for display the map, or the widget. You can also display a maps with each posts localized on the same maps !
+ Author: BE API Technical team
+ Author URI: http://www.beapi.fr
+ Domain Path: languages
+ Text Domain: simple-post-gmaps
+ Network: false
+ 
+ ----
+ 
+ Copyright 2016 BE API Technical team (human@beapi.fr)
+ 
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 global $wpdb;
 $wpdb->simple_post_gmaps = $wpdb->prefix . 'simple_post_gmaps';
